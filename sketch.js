@@ -10,6 +10,18 @@ let puertaSeleccionada = -1;
 let estrellasEncendidas = [false, false, false, false, false];
 let corazones = [];
 
+// MÚSICA
+let musicaActual = null;
+
+let archivosMusica = [
+  "musica/mi-primer-millon.mp3",
+  "musica/tabaco-y-chanel.mp3",
+  "musica/perderme-contigo.mp3",
+  "musica/guerras-perdidas.mp3",
+  "musica/pequenos-romances.mp3",
+  "musica/caraluna.mp3"
+];
+
 // CANCIONES
 let canciones = [
   "Mi primer millón",
@@ -29,10 +41,10 @@ let significados = [
   "Recordar a quienes ya no están"
 ];
 
+// CONFIGURACIÓN
 function setup() {
   createCanvas(1000, 650);
 
-  // Posiciones iniciales de los corazones
   for (let i = 0; i < 5; i++) {
     corazones.push({
       x: 200 + i * 150,
@@ -42,6 +54,27 @@ function setup() {
   }
 }
 
+// CONTROL DE MÚSICA
+function reproducirCancion(numero) {
+  detenerCancion();
+
+  musicaActual = new Audio(archivosMusica[numero]);
+  musicaActual.volume = 0.6;
+
+  musicaActual.play().catch(error => {
+    console.log("No se pudo reproducir la canción:", error);
+  });
+}
+
+function detenerCancion() {
+  if (musicaActual !== null) {
+    musicaActual.pause();
+    musicaActual.currentTime = 0;
+    musicaActual = null;
+  }
+}
+
+// DIBUJAR PANTALLAS
 function draw() {
   background(92, 48, 25);
 
@@ -141,7 +174,7 @@ function miPrimerMillon() {
   textSize(22);
   text("Los sueños que llevamos con nosotros", 500, 160);
 
-  // Asa
+  // Asa de la maleta
   noFill();
   stroke(92, 48, 25);
   strokeWeight(8);
@@ -244,6 +277,7 @@ function tabacoYChanel() {
   botonVolver();
 }
 
+// CREAR PARTÍCULAS DEL PERFUME
 function crearPerfume() {
   particulas = [];
 
@@ -272,7 +306,7 @@ function perdermeContigo() {
   textSize(21);
   text("Los recuerdos que construimos juntos", 500, 155);
 
-  // Tres fotografías
+  // Fotografías
   for (let i = 0; i < 3; i++) {
     let x = 170 + i * 240;
 
@@ -287,7 +321,6 @@ function perdermeContigo() {
     text("Recuerdo " + (i + 1), x + 95, 445);
   }
 
-  // Mensajes de las fotografías
   let mensajes = [
     "Los momentos sencillos también son especiales",
     "Hay personas que hacen inolvidable un lugar",
@@ -319,14 +352,13 @@ function guerrasPerdidas() {
   textSize(21);
   text("Las decisiones también dejan recuerdos", 500, 155);
 
-  // Puerta izquierda
+  // Puertas
   fill(125, 77, 62);
   rect(230, 230, 210, 270, 8);
 
   fill(230, 185, 130);
   circle(405, 365, 18);
 
-  // Puerta derecha
   fill(145, 94, 76);
   rect(560, 230, 210, 270, 8);
 
@@ -364,7 +396,7 @@ function pequenosRomances() {
   textSize(21);
   text("A veces acercarse también significa alejarse", 500, 155);
 
-  // Corazones que se alejan del mouse
+  // Corazones
   for (let c of corazones) {
     let distancia = dist(mouseX, mouseY, c.x, c.y);
 
@@ -413,7 +445,7 @@ function caraluna() {
   fill(45, 55, 80);
   circle(545, 265, 140);
 
-  // Estrellas interactivas
+  // Estrellas
   for (let i = 0; i < 5; i++) {
     let x = 180 + i * 160;
     let y = 450;
@@ -434,8 +466,11 @@ function caraluna() {
        500, 550);
 
   let total = 0;
+
   for (let encendida of estrellasEncendidas) {
-    if (encendida) total++;
+    if (encendida) {
+      total++;
+    }
   }
 
   if (total === 5) {
@@ -449,7 +484,7 @@ function caraluna() {
 // INTERACCIONES
 function mousePressed() {
 
-  // PORTADA
+  // ENTRAR DESDE LA PORTADA
   if (escenaActual === 0) {
     if (mouseX > 375 && mouseX < 625 &&
         mouseY > 440 && mouseY < 500) {
@@ -457,16 +492,18 @@ function mousePressed() {
     }
   }
 
-  // GALERÍA
+  // ELEGIR CANCIÓN EN LA GALERÍA
   else if (escenaActual === 1) {
     for (let i = 0; i < 6; i++) {
       let columna = i % 3;
       let fila = floor(i / 3);
+
       let x = 100 + columna * 300;
       let y = 160 + fila * 210;
 
       if (mouseX > x && mouseX < x + 230 &&
           mouseY > y && mouseY < y + 160) {
+
         escenaActual = i + 2;
 
         // Reiniciar interacciones
@@ -475,19 +512,26 @@ function mousePressed() {
         particulas = [];
         fotoSeleccionada = -1;
         puertaSeleccionada = -1;
-        estrellasEncendidas = [false, false, false, false, false];
+        estrellasEncendidas = [
+          false, false, false, false, false
+        ];
+
+        // REPRODUCIR CANCIÓN AUTOMÁTICAMENTE
+        reproducirCancion(i);
 
         break;
       }
     }
   }
 
-  // ESCENARIOS
+  // INTERACCIONES DE LOS ESCENARIOS
   else {
 
-    // Botón volver
+    // VOLVER A LA GALERÍA Y DETENER MÚSICA
     if (mouseX > 30 && mouseX < 190 &&
         mouseY > 30 && mouseY < 75) {
+
+      detenerCancion();
       escenaActual = 1;
       return;
     }
@@ -538,7 +582,8 @@ function mousePressed() {
         let x = 180 + i * 160;
 
         if (dist(mouseX, mouseY, x, 450) < 35) {
-          estrellasEncendidas[i] = !estrellasEncendidas[i];
+          estrellasEncendidas[i] =
+            !estrellasEncendidas[i];
         }
       }
     }
