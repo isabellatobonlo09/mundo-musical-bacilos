@@ -1,12 +1,6 @@
 // Mariana Cuello, Isabella Tobón, Sara Serpa
 // Proyecto final - Mundo Musical: "Recordar es vivir"
 // Memorias en estéreo - Un viaje por los recuerdos a través de la música de Bacilos
-//
-// Uso de IA: la versión con p5.sound (loadSound, Amplitude, FFT),
-// el reproductor y las fotos en cada escena se hizo con ayuda de Claude (IA).
-// Lo que le pedimos: "meter fotos y hacer que la música interactúe más
-// con las escenas, usando lo que vimos en clase de sonido".
-//
 // Música: fragmentos de 40 segundos de canciones de Bacilos,
 // usados solo con fines académicos. Los derechos son de sus autores.
 
